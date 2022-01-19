@@ -1,6 +1,6 @@
-PhD Admission Portal
+Project Title: PhD Admission Portal
 
-A project which will digitalize the process of PhD admission in CHARUSAT.
+Short Description: A project which will digitalize the process of PhD admission in CHARUSAT.
 Currently, the project has 4 types of users.
 
 Technology: MySQL, ReactJs, NodeJs and ExpressJs
