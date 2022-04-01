@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
+const autoIncrement = require("mongoose-sequence")(mongoose);
 Schema = mongoose.Schema;
 
 const candidateSchema = mongoose.Schema(
   {
+    _id: Number,
     userId: {
       type: Schema.Types.ObjectId,
       ref: "Users",
@@ -23,11 +25,12 @@ const candidateSchema = mongoose.Schema(
       type: Number,
       default: 1500,
     },
-    // tImg: {
-    //   // transaction proof via img
-    //   type: String,
-    //   required: true,
-    // },
+    tImg: {
+      // transaction proof via img
+      type: String,
+      default:
+        "https://res.cloudinary.com/mohitmernproject/image/upload/v1633200894/samples/bike.jpg",
+    },
     phdType: {
       // PhD type
       type: String, // 0 -> part time, 1 -> full time
@@ -48,10 +51,11 @@ const candidateSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    // profile: {
-    //   type: String,
-    //   required: true,
-    // },
+    profile: {
+      type: String,
+      default:
+        "https://res.cloudinary.com/mohitmernproject/image/upload/v1633200894/samples/bike.jpg",
+    },
     gender: {
       // candidate's gender
       type: String, // 0 -> Male, 1 -> Female, 2 -> transgender
@@ -84,10 +88,11 @@ const candidateSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    // signature: {
-    //   type: String,
-    //   required: true,
-    // },
+    signature: {
+      type: String,
+      default:
+        "https://res.cloudinary.com/mohitmernproject/image/upload/v1633200894/samples/bike.jpg",
+    },
     draft: {
       type: Number, // 0 -> final, 1 -> draft
       default: 0,
@@ -95,7 +100,12 @@ const candidateSchema = mongoose.Schema(
   },
   {
     timestamps: true,
+  },
+  {
+    _id: false,
   }
 );
+
+candidateSchema.plugin(autoIncrement);
 
 module.exports = mongoose.model("Candidate", candidateSchema, "tblCandidate");

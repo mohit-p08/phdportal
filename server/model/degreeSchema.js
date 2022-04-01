@@ -29,10 +29,11 @@ const degreeSchema = mongoose.Schema(
     count: {
       type: Number,
     },
-    // proof: {
-    //   type: String,
-    //   required: true,
-    // },
+    proof: {
+      type: String,
+      default:
+        "https://res.cloudinary.com/mohitmernproject/image/upload/v1633200894/samples/bike.jpg",
+    },
   },
   {
     timestamps: true,
