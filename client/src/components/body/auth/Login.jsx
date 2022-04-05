@@ -67,7 +67,7 @@ const Login = () => {
               {/* username  */}
               <div class="mb-3">
                 <label for="username" class="form-label">
-                  Username
+                  Email
                 </label>
                 <input
                   type="email"
@@ -76,7 +76,7 @@ const Login = () => {
                   value={email}
                   name="email"
                   onChange={handleChangeInput}
-                  placeholder="Username"
+                  placeholder="Email"
                   required
                   autofocus
                 />

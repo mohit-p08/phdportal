@@ -1,5 +1,7 @@
 const ACTIONS = {
   LOGIN: "LOGIN",
+  GET_TOKEN: "GET_TOKEN",
+  GET_APPLICATION: "GET_APPLICATION",
 };
 
 export default ACTIONS;

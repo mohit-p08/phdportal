@@ -9,5 +9,6 @@ router.post("/login", userCtrl.login);
 router.get("/logout", userCtrl.logout);
 router.post("/refresh_token", userCtrl.getAccessToken);
 router.post("/register", userCtrl.register);
+router.post("/resetpassword", auth, userCtrl.resetPassword);
 
 module.exports = router;

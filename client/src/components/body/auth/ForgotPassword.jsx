@@ -1,12 +1,41 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { isEmail } from "../../utils/validation/Validation";
+import {
+  showErrMsg,
+  showSuccessMsg,
+} from "../../utils/notification/Notification";
+
+const initialState = {
+  email: "",
+  err: "",
+  success: "",
+};
 
 const ForgotPassword = () => {
-  const [state, setState] = useState("");
-  const [setPwd, setSetPwd] = useState("d-none");
+  const [data, setData] = useState(initialState);
+  const { email, err, success } = data;
 
-  const resetPassword = () => {
-    setState("d-none");
-    setSetPwd("");
+  const handleChangeInput = (e) => {
+    const { name, value } = e.target;
+    setData({ ...data, [name]: value, err: "", success: "" });
+  };
+
+  const handleSubmit = async () => {
+    if (!isEmail(email))
+      return setData({
+        ...data,
+        err: "Please enter valid email!",
+        success: "",
+      });
+
+    try {
+      const res = await axios.post("/user/forgotpassword", { email });
+      return setData({ ...data, err: "", success: res.data.msg });
+    } catch (err) {
+      err.response.data.msg &&
+        setData({ ...data, err: err.response.data.msg, success: "" });
+    }
   };
 
   return (
@@ -14,49 +43,23 @@ const ForgotPassword = () => {
       <div className="forgotpassword-main m-5">
         <div className="card justify-content-center col-6 border-light ">
           <div className="card-header border-light ">
-            <h3>Reset Password</h3>
+            <h3>Forgot Password</h3>
           </div>
+          {err && showErrMsg(err)}
+          {success && showSuccessMsg(success)}
           <div className="card-body m-2">
-            <div className={`${setPwd}`}>
-              <form action="">
-                <input
-                  type="text"
-                  name=""
-                  id=""
-                  placeholder="New Password"
-                  className="form-control my-2"
-                />
-                <input
-                  type="password"
-                  name=""
-                  id=""
-                  placeholder="Confirm Password"
-                  className="form-control"
-                />
-                <button type="submit" className="btn btn-primary my-3">
-                  Reset password
-                </button>
-              </form>
-            </div>
-
-            <div className={`${state}`}>
-              <form action="">
-                <input
-                  type="email"
-                  name=""
-                  id=""
-                  placeholder="Email"
-                  className="form-control"
-                />
-                <button
-                  type="submit"
-                  className="btn btn-primary mt-3"
-                  onClick={resetPassword}
-                >
-                  Send Password Reset Link
-                </button>
-              </form>
-            </div>
+            <input
+              type="email"
+              name="email"
+              value={email}
+              onChange={handleChangeInput}
+              id="email"
+              placeholder="Email"
+              className="form-control"
+            />
+            <button onClick={handleSubmit} className="btn btn-primary mt-3">
+              Send Password Reset Link
+            </button>
           </div>
         </div>
       </div>

@@ -1,7 +1,23 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 const Navbar = () => {
+  const auth = useSelector((state) => state.auth);
+
+  const { user, isLogged } = auth;
+
+  const handleLogout = async () => {
+    try {
+      await axios.get("/user/logout");
+      localStorage.removeItem("firstLogin");
+      window.location.href = "/login";
+    } catch (err) {
+      window.location.href = "/login";
+    }
+  };
+
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-light sticky-top">
@@ -59,11 +75,24 @@ const Navbar = () => {
                 </NavLink>
               </li>
 
-              <li className="nav-item">
-                <NavLink className="nav-link" exact to="/login">
-                  Login
-                </NavLink>
-              </li>
+              {isLogged ? (
+                <>
+                  <NavLink
+                    className="nav-link"
+                    exact
+                    to="/login"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </NavLink>
+                </>
+              ) : (
+                <li className="nav-item">
+                  <NavLink className="nav-link" exact to="/login">
+                    Login
+                  </NavLink>
+                </li>
+              )}
             </ul>
           </div>
         </div>

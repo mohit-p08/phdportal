@@ -190,26 +190,35 @@ const userCtrl = {
 
   // forgot password
   forgotpassword: async (req, res) => {
-    const { email } = req.body;
+    try {
+      const { email } = req.body;
 
-    const user = await Users.findOne({ email });
-    if (!user)
-      res.status(409).json({
-        msg: "Account does not exist with given email",
+      // if (!email) return res.status(409).json({ msg: "Please enter email!" });
+
+      const user = await Users.findOne({ email });
+      if (!user)
+        res.status(409).json({
+          msg: "Account does not exist with given email",
+        });
+
+      const access_token = createAccessToken({ id: user._id });
+
+      const url = `${CLIENT_URL}/user/resetpassword/${access_token}`;
+
+      sendMail(
+        email,
+        url,
+        "Change your password",
+        "Congratulations! You can now change you password. Just click on the below button"
+      );
+
+      console.log("email sent for forgot password");
+      res.json({ msg: "Please check your email to change the password." });
+    } catch (err) {
+      res.status(500).json({
+        msg: err.message,
       });
-
-    const access_token = createAccessToken({ id: user._id });
-
-    // const url = `${CLIENT_URL}/user/resetpassword/${access_token}`;
-
-    // sendMail(
-    //   email,
-    //   url,
-    //   "Change your password",
-    //   "Congratulations! You can now change you password. Just click on the below button"
-    // );
-
-    res.json({ msg: "Please check your email to change the password." });
+    }
   },
 };
 
