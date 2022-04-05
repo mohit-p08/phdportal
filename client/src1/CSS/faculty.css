@@ -1,0 +1,15 @@
+.faculty-main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.applicantListF-tbl > table {
+    text-align: center;
+    /* table-layout: fixed; */
+    /* word-wrap: break-word; */
+}
+
+.check-buttons{
+    text-align: end;
+}

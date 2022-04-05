@@ -478,15 +478,15 @@ const candidateCtrl = {
           align: "center",
         });
 
+      pdfDoc.moveDown();
       // Personal Info
       const profileImg = await fetchImage(`${profile}`);
       pdfDoc
-        .image(profileImg, 400, 15, {
+        .image(profileImg, 430, 150, {
           fit: [100, 100],
           align: "center",
           valign: "center",
         })
-        .rect(430, 15, 100, 100)
         .stroke();
 
       pdfDoc
@@ -501,14 +501,20 @@ const candidateCtrl = {
         .text(`Department Name:    ${deptPhD}`)
         .text(`Applicant Name:    ${name}`)
         .text(`Gender:    ${gender}`)
-        .text(`Address:    ${address}, ${city} - ${pinCode}, ${state}, INDIA`);
+        .text(`Address:`);
+      pdfDoc.moveDown();
+      pdfDoc.text(`${address}, ${city} - ${pinCode}, ${state}, INDIA`, {
+        width: 300,
+        align: "justify",
+      });
 
       // line break
       // Academic Details
+      pdfDoc.moveDown();
       pdfDoc
         .font("Times-Roman", "Bold")
         .fontSize(13)
-        .text("ACADEMIC INFORMATION:");
+        .text("ACADEMIC INFORMATION:", { height: 100 });
       pdfDoc
         .font("Times-Roman", "Bold")
         .fontSize(11)
@@ -519,6 +525,8 @@ const candidateCtrl = {
               : "I am waiting for the result. Last three semester marksheets: "
           }`
         );
+
+      pdfDoc.moveDown();
       const table = {
         headers: [
           // if academics == 1, only 1 row else 3 rows
@@ -561,6 +569,7 @@ const candidateCtrl = {
       // Line break
       // Net Exam Info
       pdfDoc
+        .moveDown()
         .font("Times-Roman", "Bold")
         .fontSize(13)
         .text("NET EXAM INFORMATION:");
@@ -592,6 +601,7 @@ const candidateCtrl = {
       // line break
       // final declaration
       pdfDoc
+        .moveDown()
         .font("Times-Roman", "Bold")
         .fontSize(13)
         .text(
@@ -601,14 +611,15 @@ const candidateCtrl = {
       // signature with image
       const signImg = await fetchImage(`${signature}`);
       pdfDoc
-        .image(signImg, 430, 150, {
+        .image(signImg, 420, 580, {
           fit: [100, 100],
           align: "center",
           valign: "center",
         })
-        .rect(430, 15, 100, 100)
         .stroke();
+
       pdfDoc
+        .moveDown(14)
         .font("Times-Roman", "Bold")
         .fontSize(13)
         .text("Signature of the Applicant", { align: "right" });
@@ -622,12 +633,9 @@ const candidateCtrl = {
       // console.log();
       const proofImg = await fetchImage(`${req.body.proof}`);
       pdfDoc
-        .image(proofImg, 430, 15, {
-          fit: [100, 100],
-          align: "center",
-          valign: "center",
+        .image(proofImg, 60, 100, {
+          width: 500,
         })
-        .rect(430, 15, 100, 100)
         .stroke();
 
       // Transcation Details
@@ -640,12 +648,11 @@ const candidateCtrl = {
         .text(`Amount Paid: 1500`, { align: "left" });
       const trImg = await fetchImage(`${tImg}`);
       pdfDoc
-        .image(trImg, 430, 15, {
-          fit: [100, 100],
+        .image(trImg, 60, 150, {
           align: "center",
           valign: "center",
+          width: "500",
         })
-        .rect(430, 15, 100, 100)
         .stroke();
 
       pdfDoc.end();

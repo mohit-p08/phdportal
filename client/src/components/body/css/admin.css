@@ -1,0 +1,14 @@
+.facultyViseData-table thead th
+{
+    text-align: center;
+} 
+
+.sendN{
+    text-align: end;
+}
+
+.setStaticInfo-main > .card,.admin-paymentdetails-main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

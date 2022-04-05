@@ -1,0 +1,60 @@
+.application-main{
+    display: flex;
+    justify-content: center;
+}
+
+.phdtype-body{
+    /* display: flex; */
+    font-size: 16px;
+}
+
+.phd-type > span{
+    font-size: 18px;
+}
+
+.rb > input{
+    cursor: pointer;
+}
+
+/* .application-main{
+    display: flex;
+   justify-content: center;
+} */
+
+.upload-profile{
+    display: flex;
+    justify-content: center;
+}
+
+.upload-profile > img{
+    height: 150px;
+    width: 150px;
+    border: 2px solid black;
+}
+
+/* @media screen and (min-width:992px) {
+    .upload-profile{
+        justify-content: center;
+    }
+} */
+
+.academicRecord-table > table, .nationalEtest-table > table{
+    border: 2px solid silver;
+    table-layout: fixed;
+    text-align: center; 
+    border-radius: 3px;   
+}
+
+td {
+    padding: 7px;
+}
+
+.signPic{
+    text-align: center;
+}
+
+.signPic > img{
+    height: 70px;
+    width: 150px;
+    border: 2px solid black;
+}

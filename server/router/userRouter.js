@@ -2,6 +2,7 @@ const auth = require("../middleware/auth");
 const router = require("express").Router();
 const userCtrl = require("../controller/userCtrl");
 
+router.post("/activate", userCtrl.activateEmail);
 router.post("/changepassword", auth, userCtrl.resetPassword);
 router.post("/forgotpassword", userCtrl.forgotpassword);
 router.post("/login", userCtrl.login);
