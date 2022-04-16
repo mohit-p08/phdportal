@@ -1,6 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 
-function PhdpType() {
+const initialState = {
+  phdType: "",
+};
+
+function PhdpType(props) {
+  const auth = useSelector((state) => state.auth);
+  const token = useSelector((state) => state.token);
+
+  const { user } = auth;
+  const [data, setData] = useState(initialState);
+  const { phdType } = data;
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setData({ ...data, [name]: value, err: "", success: "" });
+  };
+
+  props.getPhdType(phdType);
+
+  // console.log(phdType);
+
   return (
     <>
       {/* ------Ph.D Program Type------ */}
@@ -14,9 +35,10 @@ function PhdpType() {
                 <input
                   type="radio"
                   className="form-check-input mx-2"
-                  name="phdtype"
+                  name="phdType"
                   id=""
-                  value="fulltime"
+                  value="1"
+                  onChange={handleChange}
                 />
                 <span className="h5">Full Time</span>
               </label>
@@ -25,9 +47,10 @@ function PhdpType() {
                 <input
                   type="radio"
                   className="form-check-input mx-2"
-                  name="phdtype"
+                  name="phdType"
                   id=""
-                  value="parttime"
+                  value="0"
+                  onChange={handleChange}
                 />
                 <span className="h5">Part Time</span>
               </label>

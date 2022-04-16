@@ -1,0 +1,122 @@
+[
+  {
+    "faculty": "Faculty of Pharmacy",
+    "faculty_code": "fop",
+    "department": [
+      {
+        "dept": "Pharmaceutics and Pharmaceutical Technolodgy",
+        "deptcode": "fop-ppt"
+      },
+      {
+        "dept": "Pharmacology and Clinical Pharmacy",
+        "deptcode": "fop-pcp"
+      },
+      {
+        "dept": "Pharmacognosy and Phytochemisty",
+        "deptcode": "fop-pp"
+      },
+      {
+        "dept": "Pharmaceutical Chemistry and Analysis",
+        "deptcode": "fop-pca"
+      }
+    ]
+  },
+  {
+    "faculty": "Faculty of Applied Science",
+    "faculty_code": "foas",
+    "department": [
+      {
+        "dept": "Biological Science",
+        "deptcode": "foas-bs"
+      },
+      {
+        "dept": "Chemical Science",
+        "deptcode": "foas-cs"
+      },
+      {
+        "dept": "Mathematical Science",
+        "deptcode": "foas-ms"
+      },
+      {
+        "dept": "Physical Science",
+        "deptcode": "foas-ps"
+      }
+    ]
+  },
+  {
+    "faculty": "Faculty of Medical Science",
+    "faculty_code": "fomds",
+    "department": [
+      {
+        "dept": "Mobility Limitations (Physiotherapy)",
+        "deptcode": "fomds-ml"
+      },
+      {
+        "dept": "Protein Science (Paramedical Science)",
+        "deptcode": "fomds-ps"
+      },
+      {
+        "dept": "Outcome Measurement and Knowledge translation (Physiotherapy)",
+        "deptcode": "fomds-omkt"
+      },
+      {
+        "dept": "Type 2 Diabetes Mellitus Academic Performance Yoga Therapy Quality of Life (Physiotherapy)",
+        "deptcode": "fomds-yt"
+      }
+    ]
+  },
+  {
+    "faculty": "Faculty of Management Studies",
+    "faculty_code": "fomngs",
+    "department": [
+      {
+        "dept": "Management Studies",
+        "deptcode": "fomngs-ms"
+      },
+      {
+        "dept": "English & Communication",
+        "deptcode": "fomngs-ec"
+      }
+    ]
+  },
+  {
+    "faculty": "Faculty of Technology & Engineering",
+    "faculty_code": "fote",
+    "department": [
+      {
+        "dept": "Computer Engineering",
+        "deptcode": "fote-ce"
+      },
+      {
+        "dept": "Mechanical Engineering",
+        "deptcode": "fote-me"
+      },
+      {
+        "dept": "Civil Engineering",
+        "deptcode": "fote-cvle"
+      }
+    ]
+  },
+  {
+    "faculty": "Faculty of Computer Science & Application",
+    "faculty_code": "focsa",
+    "department": [
+      {
+        "dept": "Artificial Intelligence",
+        "deptcode": "focsa-ai"
+      },
+      {
+        "dept": "Internet of Things (IOT)",
+        "deptcode": "focsa-iot"
+      },
+      {
+        "dept": "Data Science",
+        "deptcode": "focsa-ds"
+      },
+      {
+        "dept": "Cloud Computing",
+        "deptcode": "focsa-cc"
+      }
+    ]
+  }
+]

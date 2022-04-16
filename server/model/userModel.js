@@ -4,19 +4,23 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
     },
     email: {
       type: String,
-      required: true,
     },
     password: {
       type: String,
-      required: true,
     },
     flag: {
       type: Number,
       default: 0, // 0 -> normal user, 1 -> dean, 2 -> admin, 3 -> accountant
+    },
+    done: {
+      type: Number,
+      default: 0,
+    },
+    post: {
+      type: String,
     },
   },
   {

@@ -6,6 +6,8 @@ const Candidate = require("../model/candidateModel");
 const Degree = require("../model/degreeSchema");
 const PDFDocument = require("pdfkit-table");
 const fs = require("fs");
+const sendEmail = require("./requestSendMail");
+const Users = require("../model/userModel");
 
 const candidateCtrl = {
   // create
@@ -17,6 +19,7 @@ const candidateCtrl = {
         return res.status(409).json({
           msg: "Your application has already been processed. Please wait for the response.",
         });
+
       const {
         tId,
         tDate,
@@ -29,7 +32,7 @@ const candidateCtrl = {
         gender,
         address,
         city,
-        state,
+        states,
         pinCode,
         academics,
         netExam,
@@ -37,137 +40,420 @@ const candidateCtrl = {
         draft,
       } = req.body;
 
-      const newApplication = new Candidate({
-        userId: req.user.id,
-        tId,
-        tDate,
-        tImg,
-        phdType: phdType == 1 ? "FULL - TIME" : "PART - TIME",
-        facultyPhD,
-        deptPhD,
-        name,
-        profile,
-        gender,
-        address,
-        city,
-        state,
-        pinCode,
-        academics:
-          academics == 1
-            ? "Master Degree Completed with > 60%"
-            : "Awaited for the Result [Upload last 3 semester marksheets]",
-        netExam: netExam == 1 ? "Yes" : "No",
-        signature,
-        draft,
-      });
-
-      if (academics == 1) {
-        // 1 final marksheet
-        const { degreeName, universityName, yearOfPassing, score, proof } =
-          req.body;
-        if (
-          !degreeName ||
-          !universityName ||
-          !yearOfPassing ||
-          !score ||
-          !proof
-        )
-          return res.status(409).json({ msg: "Please fill all fields" });
-        const newDegree = new Degree({
+      // if he is a candidate only
+      const userEmail = await Users.findById({ _id: req.user.id });
+      if (userEmail.flag == 0) {
+        const newApplication = new Candidate({
           userId: req.user.id,
-          degreeName,
-          universityName,
-          yearOfPassing,
-          score,
-          proof,
-          count: 0,
+          email: userEmail.email,
+          tId,
+          tDate,
+          tImg,
+          phdType: phdType == 1 ? "FULL - TIME" : "PART - TIME",
+          facultyPhD,
+          deptPhD,
+          name,
+          profile,
+          gender,
+          address,
+          city,
+          state: states,
+          pinCode,
+          academics:
+            academics == 1
+              ? "Master Degree Completed with > 60%"
+              : "Awaited for the Result [Upload last 3 semester marksheets]",
+          netExam: netExam == 1 ? "Yes" : "No",
+          signature,
+          draft,
         });
-        await newDegree.save();
+        if (academics == "1") {
+          // 1 final marksheet
+          const { degreeName, universityName, yearOfPassing, score, proof } =
+            req.body;
+          if (
+            !degreeName ||
+            !universityName ||
+            !yearOfPassing ||
+            !score ||
+            !proof
+          )
+            return res.status(409).json({ msg: "Please fill all fields" });
+          const newDegree = new Degree({
+            userId: req.user.id,
+            degreeName,
+            universityName,
+            yearOfPassing,
+            score,
+            proof,
+            count: 0,
+          });
+          await newDegree.save();
+        } else {
+          // 3 marksheets
+          const {
+            degreeName,
+            universityName,
+            yearOfPassing,
+            score,
+            proof,
+            degreeName2,
+            universityName2,
+            yearOfPassing2,
+            score2,
+            proof2,
+            degreeName3,
+            universityName3,
+            yearOfPassing3,
+            score3,
+            proof3,
+          } = req.body;
+
+          if (
+            !degreeName ||
+            !universityName ||
+            !yearOfPassing ||
+            !score ||
+            !degreeName2 ||
+            !universityName2 ||
+            !yearOfPassing2 ||
+            !score2 ||
+            !degreeName3 ||
+            !universityName3 ||
+            !yearOfPassing3 ||
+            !score3
+          )
+            return res.status(409).json({ msg: "Please fill degree details" });
+
+          const newDegree1 = new Degree({
+            userId: req.user.id,
+            degreeName: degreeName,
+            universityName: universityName,
+            yearOfPassing: yearOfPassing,
+            score: score,
+            proof: proof,
+            count: 1,
+          });
+          const newDegree2 = new Degree({
+            userId: req.user.id,
+            degreeName: degreeName2,
+            universityName: universityName2,
+            yearOfPassing: yearOfPassing2,
+            score: score2,
+            proof: proof2,
+            count: 2,
+          });
+          const newDegree3 = new Degree({
+            userId: req.user.id,
+            degreeName: degreeName3,
+            universityName: universityName3,
+            yearOfPassing: yearOfPassing3,
+            score: score3,
+            proof: proof3,
+            count: 3,
+          });
+          await newDegree1.save();
+          await newDegree2.save();
+          await newDegree3.save();
+        }
+
+        if (netExam == "1") {
+          const { nameAsInExam, scoreAsInExam, validity, certificate } =
+            req.body;
+          if (!nameAsInExam || !scoreAsInExam || !validity)
+            return res
+              .status(409)
+              .json({ msg: "Please fill NET Exam details" });
+          const newAcademic = new Academic({
+            userId: req.user.id,
+            nameAsInExam,
+            scoreAsInExam,
+            validity,
+            certificate,
+          });
+          console.log(newAcademic);
+          await newAcademic.save();
+        }
+        await newApplication.save();
+
+        // updates application submitted
+        await Users.findOneAndUpdate(
+          { _id: req.user.id },
+          {
+            done: 1,
+          }
+        );
+
+        const user = await Candidate.findOne({ userId: req.user.id });
+        if (draft == 0) {
+          let pdfDoc = new PDFDocument();
+          pdfDoc.pipe(
+            fs.createWriteStream(`${name}_CHARUSAT-PHD-2022-${user._id}.pdf`)
+          );
+
+          // Date
+          var datetime = new Date();
+          let date = ("0" + datetime.getDate()).slice(-2);
+          let month = ("0" + (datetime.getMonth() + 1)).slice(-2);
+          let year = datetime.getFullYear();
+          pdfDoc
+            .font("Times-Roman")
+            .fontSize(10)
+            .text(`Application-ID: CHARUSAT-PHD-2022-${user._id}`, {
+              align: "left",
+              continued: true,
+              lineGap: 2,
+            })
+            .text(`Date: ${date}/${month}/${year}`, {
+              align: "right",
+            });
+
+          // University Details
+          pdfDoc
+            .font("Times-Roman", "Bold")
+            .fontSize(14)
+            .text("CHAROTAR UNIVERSITY OF SCIENCE AND TECHNOLOGY", {
+              align: "center",
+              lineGap: 2,
+            });
+
+          pdfDoc
+            .font("Times-Roman", "Bold")
+            .fontSize(10)
+            .text(
+              "CHARUSAT CAMPUS-Changa, Off.Nadiad -Petlad Highway, Gujarat- 388421",
+              {
+                align: "center",
+              }
+            );
+
+          pdfDoc
+            .font("Times-Roman", "Bold")
+            .fontSize(10)
+            .text("Ph# +91-2697-265011,265021 Fax# +91-2697-265007", {
+              align: "center",
+            });
+
+          pdfDoc
+            .font("Times-Roman", "Bold")
+            .fontSize(10)
+            // .fillColor("blue")
+            .text(
+              "E-mail:admission.phd@charusat.ac.in. web: www.charusat.ac.in",
+              {
+                align: "center",
+                // link: "www.charusat.ac.in",
+                lineGap: 2,
+              }
+            );
+
+          // line break
+          pdfDoc.lineTo(100, 160).stroke();
+
+          pdfDoc
+            .font("Times-Roman", "Bold")
+            .fontSize(14)
+            .text("Ph.D. Application Form", {
+              align: "center",
+            });
+
+          pdfDoc.moveDown();
+          // Personal Info
+          const profileImg = await fetchImage(`${profile}`);
+          pdfDoc
+            .image(profileImg, 430, 150, {
+              fit: [100, 100],
+              align: "center",
+              valign: "center",
+            })
+            .stroke();
+
+          pdfDoc
+            .font("Times-Roman", "Bold")
+            .fontSize(11)
+            .text(
+              `Ph.D. Programme Type:    ${
+                phdType == 1 ? "FULL - TIME" : "PART - TIME"
+              }`
+            )
+            .text(`Ph.D. Programme Under:    ${facultyPhD}`)
+            .text(`Department Name:    ${deptPhD}`)
+            .text(`Applicant Name:    ${name}`)
+            .text(`Gender:    ${gender}`)
+            .text(`Address:`);
+          pdfDoc.moveDown();
+          pdfDoc.text(`${address}, ${city} - ${pinCode}, ${states}, INDIA`, {
+            width: 300,
+            align: "justify",
+          });
+
+          // line break
+          // Academic Details
+          pdfDoc.moveDown();
+          pdfDoc
+            .font("Times-Roman", "Bold")
+            .fontSize(13)
+            .text("ACADEMIC INFORMATION:", { height: 100 });
+          pdfDoc
+            .font("Times-Roman", "Bold")
+            .fontSize(11)
+            .text(
+              `${
+                academics == 1
+                  ? "I have completed my Master Degree with > 60%"
+                  : "I am waiting for the result. Last three semester marksheets: "
+              }`
+            );
+
+          pdfDoc.moveDown();
+          const table = {
+            headers: [
+              // if academics == 1, only 1 row else 3 rows
+              "#",
+              // {
+              //   label: "Qualifying Degree Name",
+              //   property: "pname",
+              //   width: 100,
+              // },
+              "Qualifying Degree Name",
+              "Board/University",
+              "Year of Passing",
+              "% of Marks or CGPA",
+            ],
+            // datas: [{ pname: `${degreeName}` }],
+            rows: [
+              [
+                "1",
+                "BTECH",
+                "CHARUSAT",
+                "2023",
+                "9.0",
+                // `${degreeName}`,
+                // `${universityName}`,
+                // `${yearOfPassing}`,
+                // `${score}`,
+              ],
+            ],
+            options: {
+              width: 300,
+            },
+          };
+
+          pdfDoc.table(table, {
+            // A4 595.28 x 841.89 (portrait) (about width sizes)
+            width: 300,
+            //columnsSize: [ 200, 100, 100 ],
+          });
+
+          // Line break
+          // Net Exam Info
+          pdfDoc
+            .moveDown()
+            .font("Times-Roman", "Bold")
+            .fontSize(13)
+            .text("NET EXAM INFORMATION:");
+
+          const table1 = {
+            // only if net == 1
+            headers: ["#", "Name as in Exam", "Score", "Validity"],
+            // datas: [{ pname: `${degreeName}` }],
+            rows: [
+              [
+                "1",
+                "Jayesh",
+                "99.4",
+                "2023",
+                // `${nameAsInExam}`,
+                // `${scoreAsInExam}`,
+                // `${validity}`,
+              ],
+            ],
+            options: {
+              width: 300,
+            },
+          };
+
+          pdfDoc.table(table1, {
+            width: 300,
+          });
+
+          // line break
+          // final declaration
+          pdfDoc
+            .moveDown()
+            .font("Times-Roman", "Bold")
+            .fontSize(13)
+            .text(
+              "I declare that all the information provided by me in the application is true to the best of my knowledge and belief. I understand that I am liable for prosecution if any of the information is found to be false at any time in future."
+            );
+
+          // signature with image
+          const signImg = await fetchImage(`${signature}`);
+          pdfDoc
+            .image(signImg, 420, 580, {
+              fit: [100, 100],
+              align: "center",
+              valign: "center",
+            })
+            .stroke();
+
+          pdfDoc
+            .moveDown(14)
+            .font("Times-Roman", "Bold")
+            .fontSize(13)
+            .text("Signature of the Applicant", { align: "right" });
+
+          // Second page
+          pdfDoc.addPage();
+          pdfDoc
+            .font("Times-Roman", "Bold")
+            .fontSize(14)
+            .text("Detail of Academic Record:", { align: "left" });
+          // console.log();
+          const proofImg = await fetchImage(`${req.body.proof}`);
+          pdfDoc
+            .image(proofImg, 60, 100, {
+              width: 500,
+            })
+            .stroke();
+
+          // Transcation Details
+          pdfDoc.addPage();
+          pdfDoc
+            .font("Times-Roman", "Bold")
+            .fontSize(14)
+            .text(`Transaction ID: ${tId}`, { align: "left" })
+            .text(`Transaction Date: ${tDate}`, { align: "left" })
+            .text(`Amount Paid: 1500`, { align: "left" });
+          const trImg = await fetchImage(`${tImg}`);
+          pdfDoc
+            .image(trImg, 60, 150, {
+              align: "center",
+              valign: "center",
+              width: "500",
+            })
+            .stroke();
+
+          pdfDoc.end();
+          console.log("pdf generated successfully!!");
+
+          sendEmail(
+            userEmail.email,
+            "Congratulations, You have successfully applied for the PhD Program",
+            "Here is what we have received from you!",
+            "Application PDF",
+            "Thank You!"
+          );
+          console.log("Confirmation Mail sent successfully");
+        }
+
+        console.log("Application Generated Successfully!");
+        res.status(201).json({ msg: "Application Processed Successfully!" });
       } else {
-        // 3 marksheets
-        const {
-          degreeName1,
-          universityName1,
-          yearOfPassing1,
-          score1,
-          proof1,
-          degreeName2,
-          universityName2,
-          yearOfPassing2,
-          score2,
-          proof2,
-          degreeName3,
-          universityName3,
-          yearOfPassing3,
-          score3,
-          proof3,
-        } = req.body;
-
-        if (
-          !degreeName1 ||
-          !universityName1 ||
-          !yearOfPassing1 ||
-          !score1 ||
-          !degreeName2 ||
-          !universityName2 ||
-          !yearOfPassing2 ||
-          !score2 ||
-          !degreeName2 ||
-          !universityName2 ||
-          !yearOfPassing2 ||
-          !score2
-        )
-          return res.status(409).json({ msg: "Please fill degree details" });
-
-        const newDegree1 = new Degree({
-          userId: req.user.id,
-          degreeName: degreeName1,
-          universityName: universityName1,
-          yearOfPassing: yearOfPassing1,
-          score: score1,
-          proof: proof1,
-          count: 1,
+        return res.status(500).json({
+          msg: "You are not a candidate",
         });
-        const newDegree2 = new Degree({
-          userId: req.user.id,
-          degreeName: degreeName2,
-          universityName: universityName2,
-          yearOfPassing: yearOfPassing2,
-          score: score2,
-          proof: proof2,
-          count: 2,
-        });
-        const newDegree3 = new Degree({
-          userId: req.user.id,
-          degreeName: degreeName3,
-          universityName: universityName3,
-          yearOfPassing: yearOfPassing3,
-          score: score3,
-          proof: proof3,
-          count: 3,
-        });
-        await newDegree1.save();
-        await newDegree2.save();
-        await newDegree3.save();
       }
-
-      if (netExam == 1) {
-        const { nameAsInExam, scoreAsInExam, validity, certificate } = req.body;
-        if (!nameAsInExam || !scoreAsInExam || !validity)
-          return res.status(409).json({ msg: "Please fill NET Exam details" });
-        const newAcademic = new Academic({
-          userId: req.user.id,
-          nameAsInExam,
-          scoreAsInExam,
-          validity,
-          certificate,
-        });
-        await newAcademic.save();
-      }
-
-      await newApplication.save();
-      console.log("Application Generated Successfully!");
-      res.status(201).json({ msg: "Application Processed Successfully!" });
     } catch (err) {
       res.status(500).json({
         msg: err.message,
@@ -281,11 +567,11 @@ const candidateCtrl = {
     } else {
       // last 3 marksheets
       const {
-        degreeName1,
-        universityName1,
-        yearOfPassing1,
-        score1,
-        proof1,
+        degreeName,
+        universityName,
+        yearOfPassing,
+        score,
+        proof,
         degreeName2,
         universityName2,
         yearOfPassing2,
@@ -306,11 +592,11 @@ const candidateCtrl = {
         // even this is not required
         const newDegree1 = new Degree({
           userId: req.user.id,
-          degreeName: degreeName1,
-          universityName: universityName1,
-          yearOfPassing: yearOfPassing1,
-          score: score1,
-          proof: proof1,
+          degreeName: degreeName,
+          universityName: universityName,
+          yearOfPassing: yearOfPassing,
+          score: score,
+          proof: proof,
           count: 1,
         });
         const newDegree2 = new Degree({
@@ -342,11 +628,11 @@ const candidateCtrl = {
         await Degree.findOneAndUpdate(
           { userId: req.user.id, count: 1 },
           {
-            degreeName: degreeName1,
-            universityName: universityName1,
-            yearOfPassing: yearOfPassing1,
-            score: score1,
-            proof: proof1,
+            degreeName: degreeName,
+            universityName: universityName,
+            yearOfPassing: yearOfPassing,
+            score: score,
+            proof: proof,
           }
         );
         await Degree.findOneAndUpdate(
@@ -402,18 +688,13 @@ const candidateCtrl = {
         await Academic.findOneAndDelete({ userId: req.user.id });
     }
 
-    // generate PDF - change draft = 0
-    if (draft == 1) {
+    // generate PDF
+    const userEmail = await Users.findById({ _id: req.user.id });
+    if (draft == 0) {
       let pdfDoc = new PDFDocument();
       pdfDoc.pipe(
         fs.createWriteStream(`${name}_CHARUSAT-PHD-2022-${user._id}.pdf`)
       );
-
-      // application ID
-      // pdfDoc
-      //   .font("Times-Roman")
-      //   .fontSize(10)
-      //   ;
 
       // Date
       var datetime = new Date();
@@ -657,6 +938,15 @@ const candidateCtrl = {
 
       pdfDoc.end();
       console.log("pdf generated successfully!!");
+
+      sendEmail(
+        userEmail.email,
+        "Congratulations, You have successfully applied for the PhD Program",
+        "Here is what we have received from you!",
+        "Application PDF",
+        "Thank You!"
+      );
+      console.log("Confirmation Mail sent successfully");
     }
 
     // send email of submitted application containing PDF
@@ -730,6 +1020,30 @@ const candidateCtrl = {
       console.log("Fetched Data Successfully!");
 
       return res.status(201).json(finalData);
+    } catch (err) {
+      res.status(500).json({
+        msg: err.message,
+      });
+    }
+  },
+
+  // get draft field
+  getField: async (req, res) => {
+    try {
+      const { userId } = req.params.id;
+      const application = await Candidate.findOne({
+        userId: req.params.id,
+      }).exec();
+
+      if (!application)
+        return res.status(409).json({
+          msg: "You have not submitted any application",
+        });
+      // console.log(application);
+
+      console.log("Fetched Data Successfully!");
+
+      return res.status(201).json(application.draft);
     } catch (err) {
       res.status(500).json({
         msg: err.message,

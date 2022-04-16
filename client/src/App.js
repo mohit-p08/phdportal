@@ -31,10 +31,10 @@ function App() {
 
   useEffect(() => {
     if (token) {
-      const getUser = () => {
+      const getUser = async () => {
         dispatch(dispatchLogin());
 
-        return fetchApplication(token).then((res) => {
+        return await fetchApplication(token).then((res) => {
           dispatch(disptachGetApplication(res));
         });
       };

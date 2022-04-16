@@ -14,11 +14,13 @@ app.use(fileUpload({ useTempFiles: true }));
 app.use(express.json());
 
 // Routes
-app.use("/user", require("./router/userRouter"));
+app.use("/admin", require("./router/adminRouter"));
 app.use("/application", require("./router/candidateRouter"));
 app.use("/api", require("./router/upload"));
-// app.use("/dean", require("./router/deanRouter"));
-// app.use("/admin", require("./router/adminRouter"));
+app.use("/contact", require("./router/contactRouter"));
+app.use("/dean", require("./router/deanRouter"));
+app.use("/user", require("./router/userRouter"));
+
 // app.use("/accountant", require("./router/accountantRouter"));
 
 // DB connection

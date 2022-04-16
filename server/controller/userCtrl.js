@@ -32,20 +32,20 @@ const userCtrl = {
 
       const hashedPassword = await bcrypt.hash(password, 10); // 10 is salt level
 
-      const newUser = {
+      const newUser = new Users({
         name,
         email,
         password: hashedPassword,
-      };
+      });
 
       // await newUser.save();
 
       // email verification
       const activation_token = createActivationToken(newUser);
-      // console.log(activation_token);
+      console.log(activation_token);
 
       const url = `${CLIENT_URL}/user/activate/${activation_token}`;
-      // console.log(url);
+      console.log(url);
       sendMail(
         email,
         url,
@@ -149,6 +149,26 @@ const userCtrl = {
     }
   },
 
+  // get done from user to check if he has submitted the application or not
+  getUser: async (req, res) => {
+    try {
+      const email = req.params.email;
+      const user = await Users.findOne({ email }).select("-password");
+      res.json({ user });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+
+  getUserByToken: async (req, res) => {
+    try {
+      const user = await Users.findById(req.user.id).select("-password");
+      res.json(user);
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+
   // change password
   resetPassword: async (req, res) => {
     try {
@@ -238,14 +258,14 @@ function validatePassword(password) {
 // creates access token
 const createAccessToken = (payload) => {
   return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "30m",
+    expiresIn: "120m",
   });
 };
 
 // activation token
 const createActivationToken = (payload) => {
   return jwt.sign(payload, process.env.ACTIVATION_TOKEN_SECRET, {
-    expiresIn: "5m",
+    expiresIn: "1440m",
   });
 };
 

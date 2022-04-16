@@ -8,10 +8,10 @@ export const dispatchLogin = () => {
 };
 
 export const fetchApplication = async (token) => {
-  const res = await axios.get("./application/myapplication", {
+  const res = await axios.get("/application/myapplication", {
     headers: { Authorization: token },
   });
-  console.log(res);
+  // console.log(res);
   return res;
 };
 
@@ -20,8 +20,8 @@ export const disptachGetApplication = async (res) => {
     type: ACTIONS.GET_APPLICATION,
     payload: {
       user: res.data,
-      isDean: res.data.role === 1 ? true : false,
-      isAdmin: res.data.role === 2 ? true : false,
+      // isDean: res.data.role === 1 ? true : false,
+      // isAdmin: res.data.role === 2 ? true : false,
     },
   };
 };

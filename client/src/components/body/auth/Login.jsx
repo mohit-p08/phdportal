@@ -32,13 +32,32 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await axios.post("/user/login", { email, password });
-      // console.log(res);
       setUser({ ...user, err: "", success: res.data.msg });
 
       localStorage.setItem("firstLogin", true);
 
       dispatch(dispatchLogin());
-      navigate("/application");
+
+      const check = await axios.get(`/user/getuser/${email}`);
+      var promise = Promise.resolve(check);
+      promise.then(function (val) {
+        if (val.data.user.done == 0) {
+          navigate("/TandC");
+        } else {
+          // fetch from backend for value of draft
+          const checkDraft = axios.get(
+            `/application/getfield/${val.data.user._id}`
+          );
+          var checkPromise = Promise.resolve(checkDraft);
+          checkPromise.then(function (val) {
+            if (val.data == 0) {
+              navigate("/viewapplication");
+            } else {
+              navigate("/application");
+            }
+          });
+        }
+      });
     } catch (err) {
       err.response.data.msg &&
         setUser({ ...user, err: err.response.data.msg, success: "" });

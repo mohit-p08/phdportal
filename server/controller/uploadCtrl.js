@@ -17,8 +17,8 @@ const uploadCtrl = {
         file.tempFilePath,
         {
           folder: "profile",
-          width: 150,
-          height: 150,
+          // width: 150,
+          // height: 150,
           crop: "fill",
         },
         async (err, result) => {
@@ -45,8 +45,8 @@ const uploadCtrl = {
         file.tempFilePath,
         {
           folder: "signature",
-          width: 150,
-          height: 150,
+          // width: 150,
+          // height: 150,
           crop: "fill",
         },
         async (err, result) => {
@@ -73,8 +73,8 @@ const uploadCtrl = {
         file.tempFilePath,
         {
           folder: "payment",
-          width: 150,
-          height: 150,
+          // width: 150,
+          // height: 150,
           crop: "fill",
         },
         async (err, result) => {
@@ -101,8 +101,8 @@ const uploadCtrl = {
         file.tempFilePath,
         {
           folder: "degree",
-          width: 150,
-          height: 150,
+          // width: 150,
+          // height: 150,
           crop: "fill",
         },
         async (err, result) => {
@@ -129,8 +129,8 @@ const uploadCtrl = {
         file.tempFilePath,
         {
           folder: "academic",
-          width: 150,
-          height: 150,
+          // width: 150,
+          // height: 150,
           crop: "fill",
         },
         async (err, result) => {
