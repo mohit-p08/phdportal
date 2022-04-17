@@ -1,5 +1,5 @@
 import React from "react";
-import "../CSS/infoBanner.css";
+import "../css/infoBanner.css";
 
 // application type
 const aType = [

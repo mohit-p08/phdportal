@@ -1,9 +1,9 @@
 import React from "react";
 import "../css/admin.css";
 
-import FacultyViseData from "./admin/FacultyViseData";
-import ListPhdApp from "./admin/ListPhdApp";
-import InfoBanner from "../../../../src1/components/InfoBanner";
+import FacultyViseData from "./subModules/FacultyViseData";
+import ListPhdApp from "./subModules/ListPhdApp";
+import InfoBanner from "./InfoBanner";
 
 const Admin = () => {
   return (

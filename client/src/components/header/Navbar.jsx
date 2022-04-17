@@ -5,8 +5,7 @@ import axios from "axios";
 
 const Navbar = () => {
   const auth = useSelector((state) => state.auth);
-
-  const { user, isLogged } = auth;
+  const { isLogged } = auth;
 
   const handleLogout = async () => {
     try {

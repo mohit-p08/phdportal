@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import "../CSS/faculty.css";
-import ApplicantListF from "./faculty/ApplicantListF";
-import InfoBanner from "./InfoBanner";
+import "../css/faculty.css";
+import ApplicantListF from "./ApplicantListF";
+import InfoBanner from "../admin/InfoBanner";
 
 const aType = [
   {

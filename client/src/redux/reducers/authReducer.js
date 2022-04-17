@@ -1,7 +1,7 @@
 import ACTIONS from "../actions/";
 
 const initialState = {
-  user: [],
+  finalData: {},
   isLogged: false,
   // isAdmin: false,
   // isDean: false,
@@ -16,9 +16,10 @@ const authReducer = (state = initialState, action) => {
         isLogged: true,
       };
     case ACTIONS.GET_USER:
+      console.log(action.payload);
       return {
         ...state,
-        user: action.payload.finalData,
+        finalData: action.payload.finalData,
         // isAdmin: action.payload.isAdmin,
       };
     default:

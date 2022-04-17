@@ -41,21 +41,29 @@ const Login = () => {
       const check = await axios.get(`/user/getuser/${email}`);
       var promise = Promise.resolve(check);
       promise.then(function (val) {
-        if (val.data.user.done == 0) {
-          navigate("/TandC");
+        if (val.data.user.flag == 1) {
+          navigate("/dean");
+        } else if (val.data.user.flag == 2) {
+          // admin
+          navigate("admin");
         } else {
-          // fetch from backend for value of draft
-          const checkDraft = axios.get(
-            `/application/getfield/${val.data.user._id}`
-          );
-          var checkPromise = Promise.resolve(checkDraft);
-          checkPromise.then(function (val) {
-            if (val.data == 0) {
-              navigate("/viewapplication");
-            } else {
-              navigate("/application");
-            }
-          });
+          if (val.data.user.done == 0) {
+            navigate("/TandC");
+          } else {
+            // fetch from backend for value of draft
+            const checkDraft = axios.get(
+              `/application/getfield/${val.data.user._id}`
+            );
+            var checkPromise = Promise.resolve(checkDraft);
+            checkPromise.then(function (val) {
+              if (val.data == 0) {
+                navigate("/viewapplication");
+              } else {
+                // navigate("/TandC");
+                navigate("/application");
+              }
+            });
+          }
         }
       });
     } catch (err) {

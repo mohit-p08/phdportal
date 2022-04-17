@@ -3,8 +3,10 @@ import { Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import ActivationEmail from "./auth/ActivationEmail";
+import Admin from "./admin/Admin";
 import Application from "./application/Application";
 import ContactUs from "./contactUs/ContactUs";
+import Faculty from "./faculty/Faculty";
 import ForgotPassword from "./auth/ForgotPassword";
 import HowToApply from "./howToApply/HowToApply";
 import ImpDates from "./impDates/ImpDates";
@@ -35,11 +37,19 @@ function Body() {
           exact
         />
         <Route
+          path="/admin"
+          element={<Admin />}
+          exact
+          // isAdmin validation remaining
+        />
+        <Route
           path="/application"
           element={isLogged ? <Application /> : <Login />}
           exact
         />
         <Route path="/contactus" element={<ContactUs />} exact />
+        {/* isDean validation remaining */}
+        <Route path="/dean" element={<Faculty />} exact />
         <Route path="/forgotpassword" element={<ForgotPassword />} exact />
         <Route path="/howtoapply" element={<HowToApply />} exact />
         <Route path="/impdates" element={<ImpDates />} exact />

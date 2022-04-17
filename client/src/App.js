@@ -14,6 +14,7 @@ function App() {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const auth = useSelector((state) => state.auth);
+  console.log(auth);
 
   useEffect(() => {
     const firstLogin = localStorage.getItem("firstLogin");
@@ -24,6 +25,7 @@ function App() {
           type: "GET_TOKEN",
           payload: res.data.access_token,
         });
+        // console.log(res);
       };
       getToken();
     }
@@ -31,10 +33,10 @@ function App() {
 
   useEffect(() => {
     if (token) {
-      const getUser = async () => {
+      const getUser = () => {
         dispatch(dispatchLogin());
 
-        return await fetchApplication(token).then((res) => {
+        return fetchApplication(token).then((res) => {
           dispatch(disptachGetApplication(res));
         });
       };

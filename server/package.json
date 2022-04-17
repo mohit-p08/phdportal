@@ -25,6 +25,7 @@
     "mongoose-sequence": "^5.3.1",
     "nodemailer": "^6.7.3",
     "pdfkit": "^0.13.0",
-    "pdfkit-table": "^0.1.86"
+    "pdfkit-table": "^0.1.86",
+    "voilab-pdf-table": "^0.5.1"
   }
 }

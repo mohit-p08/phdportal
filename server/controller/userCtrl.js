@@ -32,17 +32,22 @@ const userCtrl = {
 
       const hashedPassword = await bcrypt.hash(password, 10); // 10 is salt level
 
-      const newUser = new Users({
+      const newUser = {
         name,
         email,
         password: hashedPassword,
-      });
+      };
 
+      // const newUser = new Users({
+      //   name,
+      //   email,
+      //   password: hashedPassword,
+      // });
       // await newUser.save();
 
       // email verification
       const activation_token = createActivationToken(newUser);
-      console.log(activation_token);
+      // console.log(activation_token);
 
       const url = `${CLIENT_URL}/user/activate/${activation_token}`;
       console.log(url);

@@ -13,22 +13,34 @@ const initialState = {
   success: "",
 };
 
-async function PaymentInfo(props) {
+function PaymentInfo(props) {
   const token = useSelector((state) => state.token);
-  const user = useSelector((state) => state.user);
-  console.log(user);
+  const [fetch, setFetch] = useState(0);
+  const [flag, setFlag] = useState(0);
+  // console.log(token);
+  // const auth = useSelector((state) => state.finalData);
+  // const { user } = auth;
+  // console.log(auth);
 
   const [data, setData] = useState(initialState);
   const { tId, tDate, err, success } = data;
   const [tImg, setTImg] = useState(false);
 
+  if (flag == 0) {
+    const res = axios.get("/application/myapplication", {
+      headers: { Authorization: token },
+    });
+    var promise = Promise.resolve(res);
+    promise.then(function (val) {
+      setFetch(val.data);
+    });
+    setFlag(1);
+  }
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData({ ...data, [name]: value, err: "", success: "" });
   };
-
-  // send data from child to parent
-  props.getPaymentInfo(data, tImg);
 
   const changeAvatar = async (e) => {
     e.preventDefault();
@@ -68,6 +80,9 @@ async function PaymentInfo(props) {
     }
   };
 
+  // send data from child to parent
+  props.getPaymentInfo(data, tImg);
+
   return (
     <>
       {/* ------payment information------  */}
@@ -84,6 +99,7 @@ async function PaymentInfo(props) {
                 name="tId"
                 value={tId}
                 onChange={handleChange}
+                // defaultValue={fetch.application.tId}
                 id=""
                 className="form-control"
                 required

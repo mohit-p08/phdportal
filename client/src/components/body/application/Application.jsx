@@ -169,7 +169,7 @@ function Application() {
         success: "Application Submitted Successfully :)",
       });
 
-      navigate("/");
+      navigate("/viewapplication");
     } catch (err) {
       setData({ ...data, err: err.response.data.msg, success: "" });
     }
@@ -243,26 +243,21 @@ function Application() {
         {/* application form  */}
         <form className="row" onSubmit={handleSubmit}>
           {/* ------payment information------  */}
+          {/* <PaymentInfo /> */}
           <PaymentInfo getPaymentInfo={getPaymentInfoDetails} />
 
           {/* ------Ph.D Program Type------ */}
           <PhdpType getPhdType={getPhdTypeDetails} />
-
           {/* ------phd program Name------  */}
           <PhdpName getPhdName={getPhdNameDetails} />
-
           {/* ------personal Details------  */}
           <PersonalDetail getPersonal={getPersonalDetails} />
-
           {/* details of acedemic record  */}
           <AcademicRecord getAcademicRecord={getAcademicRecordDetails} />
-
           {/* National Eligibility Test  */}
           <NationalEtest getNetExam={getNetExamDetails} />
-
           {/* Upload Applicant Signature */}
           <Signature getSignature={getSignatureDetails} />
-
           {/* Declaration  */}
           <div className="declaration-main m-4">
             <div class="card col-sm-6 col-xl-12">
@@ -282,9 +277,12 @@ function Application() {
               </div>
             </div>
           </div>
-
           <center>
-            <button className="btn btn-primary m-2 p-2" onClick={handleSave}>
+            <button
+              className="btn btn-primary m-2 p-2"
+              onClick={handleSave}
+              disabled
+            >
               {" "}
               SAVE
             </button>

@@ -16,10 +16,11 @@ export const fetchApplication = async (token) => {
 };
 
 export const disptachGetApplication = async (res) => {
+  // console.log(res.data);
   return {
-    type: ACTIONS.GET_APPLICATION,
+    type: ACTIONS.GET_USER,
     payload: {
-      user: res.data,
+      finalData: res.data,
       // isDean: res.data.role === 1 ? true : false,
       // isAdmin: res.data.role === 2 ? true : false,
     },
