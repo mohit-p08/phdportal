@@ -5,6 +5,6 @@ Currently, the project has 4 types of users.
 
 Technology: MongoDB, ReactJs, NodeJs and ExpressJs
 
-Team: 19CE112 (Preyash), 19CE113 (Jaimin), 19CE114 (Mohit), 20CE009 (Yash)
+Team: 19CE112 (Preyash), 19CE113 (Jaimin), 19CE114 (Mohit)
 
 Mentor: Prof. Mrugendrasinh Rahevar
